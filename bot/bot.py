@@ -76,6 +76,18 @@ class Bot:
                 closest = entry
         return closest
 
+    def scanClose(self, gameMap, tile):
+        pos = self.PlayerInfo.Position
+        if gameMap.getTileAt(pos + Point(0, -1)) is tile:
+            return Point(0, -1)
+        if gameMap.getTileAt(pos + Point(0, 1)) is tile:
+            return Point(0, 1)
+        if gameMap.getTileAt(pos + Point(1, 0)) is tile:
+            return  Point(1, 0)
+        if gameMap.getTileAt(pos + Point(-1, 0)) is tile:
+            return Point(-1, 0)
+        return pos
+
 
     def execute_turn(self, gameMap, visiblePlayers):
         """
@@ -83,12 +95,21 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
+        if self.goHome:
+
+            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, self.PlayerInfo.HouseLocation, gameMap)
+
+            self.path = pathFinder.Solve()
+            self.inMotion = True
+            self.destinationAction = "home"
+            self.goHome = False
+            return create_move_action(Point(0,-1))
 
         if not self.inMotion:
             mineralPositions = self.scanResources(gameMap)
             if len(mineralPositions) == 0:
                 #defaultMove = self.computeDefaultNextMove()
-                defaultMove = Point(1,0)
+                defaultMove = Point(-1,0)
                 print("This is number 1")
                 return create_move_action(defaultMove)
             else:
@@ -101,6 +122,9 @@ class Bot:
 
         if self.inMotion:
             print("inMotion")
+            print(self.PlayerInfo.HouseLocation)
+            print(self.PlayerInfo.Position)
+            print(self.path)
             #print(self.path)
             nextMove = self.path[self.nextMoveIndex]
             print (nextMove)
@@ -109,8 +133,12 @@ class Bot:
             print(decision)
 
             if self.nextMoveIndex == len(self.path) - 1:
-                ressourceDirection = scanClose
-                destinationAction = self.execDestinationAction(self.path[self.nextMoveIndex-1])
+
+                print("at destination")
+                resourceDirection = self.scanClose(gameMap, TileContent.Resource)
+                print(resourceDirection)
+                destinationAction = self.execDestinationAction(resourceDirection)
+                print(self.destinationAction)
                 self.nextMoveIndex = 0
                 self.path = []
                 self.inMotion = False
@@ -123,18 +151,14 @@ class Bot:
                 self.nextMoveIndex += 1
                 return create_move_action(nextMove)
 
-        if self.goHome:
-            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, self.PlayerInfo.HouseLocation, gameMap)
-            self.path = pathFinder.Solve()
-            self.inMotion = True
-            self.destinationAction = "home"
-            self.goHome = False
 
 
 
 
         #print(visiblePlayers)
-        '''print(visiblePlayers)
+        '''
+        #print(self.scanClose(gameMap, TileContent.Resource))
+
         nearbyRes = self.scanResources(gameMap)
         print(nearbyRes)
         print(self.findClosest(nearbyRes))
