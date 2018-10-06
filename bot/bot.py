@@ -8,8 +8,9 @@ class Bot:
         self.priority = ""
         self.start = True
         self.inMotion = False
-        self.nextMove = 0
+        self.nextMoveIndex = 0
         self.path = []
+        self.goHome = False
         pass
 
 
@@ -42,16 +43,22 @@ class Bot:
             print("insert pathfinder algorithm to find resources")
         return nearbyRes
 
-    # returns a list containing [x, y] of the coordinates of nearby players
-    def scanPlayers(self, surr):
-        nearbyPlayers = []
-        for y in range(0, len(surr)):
-            for x in range(0, len(surr[y])):
-                if surr[y][x] is TileContent.Player:
-                    nearbyPlayers.append([x, y])
-        if self.priority is "ply":
-            print("insert pathfinder algorithm to find resources")
-        return nearbyPlayers
+        # a tear drops for val RIP your valuable time
+
+    def choosePathAction(self, gameMap,nextMove):
+        nextBlock = self.PlayerInfo.position + nextMove
+        blockId =  gameMap.getTileAt(nextBlock).value
+        if blockId == TileContent.Wall:
+            return "attack"
+        elif blockId == TileContent.Empty:
+            return "move"
+
+    def execDestinationAction(self, direction):
+        if self.destinationAction == "collect":
+            self.goHome = True
+            return create_collect_action(direction)
+        elif self.destinationAction == "home":
+            return create_move_action(Point(0,0))
 
     def execute_turn(self, gameMap, visiblePlayers):
         """
@@ -59,15 +66,55 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
+
+        if not self.inMotion:
+            mineralPositions = self.scanArea(gameMap)
+            if len(mineralPositions) == 0:
+                #defaultMove = self.computeDefaultNextMove()
+                defaultMove = Point(1,0)
+                return create_move_action(defaultMove)
+            else:
+                closestMineral = self.findClosest(mmineralPositions)
+                pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, closestMineral, gameMap)
+                self.path = pathFinder.Solve()
+                self.inMotion = True
+                self.destinationAction = "collect"
+
+
+        if self.inMotion:
+            nextMove = self.path[self.nextMoveIndex]
+            decision = self.choosePathAction(gameMap, nextMove)
+            if self.nextMoveIndex == len(self.path):
+                destinationAction = self.execDestinationAction(self.path[self.nextMoveIndex-1])
+                self.nextMoveIndex = 0
+                self.path = []
+                self.inMotion = False
+                return destinationAction
+
+            elif decision == "attack":
+                return create_attack_action(nextMove)
+            elif decision == "move":
+                self.nextMoveIndex += 1
+                create_move_action(nextMove)
+
+        if self.goHome:
+            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, closestMineral, gameMap)
+            self.path = pathFinder.Solve()
+            self.inMotion = True
+            self.destinationAction = "home"
+            self.goHome = False
+
+
+
+
+        #print(visiblePlayers)
+        '''print(visiblePlayers)
         print("==========================================================")
         if self.start:
             self.start = True
             self.inMotion = True
-            '''print(self.PlayerInfo.Position)
-            print(Point(-6, 0))
-            print(self.PlayerInfo.Position + Point(-6, 0))'''
+
             pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, self.PlayerInfo.Position + Point(2, 0))
-            '''print(gameMap)'''
             self.path = pathFinder.Solve(gameMap)
             for point in self.path:
                 print(point)
@@ -86,8 +133,8 @@ class Bot:
         #directions = [Go.Right, Go.Right, Go.Right, Go.Right, Go.Right]
         surr = self.surroundings(gameMap)
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Go.Up.value)
-
+        return create_move_action(Go.Up.value)'''
+        return create_move_action(Point(0, 0))
     def after_turn(self):
         self.turn += 1
         """
