@@ -56,12 +56,25 @@ class Bot:
                 closest = entry
         return closest
 
+    def scanClose(self, gameMap, tile):
+        pos = self.PlayerInfo.Position
+        if gameMap.getTileAt(pos + Point(0, -1)) is tile:
+            return pos + Point(0, -1)
+        if gameMap.getTileAt(pos + Point(0, 1)) is tile:
+            return pos + Point(0, 1)
+        if gameMap.getTileAt(pos + Point(1, 0)) is tile:
+            return pos + Point(1, 0)
+        if gameMap.getTileAt(pos + Point(-1, 0)) is tile:
+            return pos + Point(-1, 0)
+        return pos
+
     def execute_turn(self, gameMap, visiblePlayers):
         """
         This is where you decide what action to take.
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
+        #print(self.scanClose(gameMap, TileContent.Resource))
         nearbyRes = self.scanResources(gameMap)
         print(nearbyRes)
         print(self.findClosest(nearbyRes))
