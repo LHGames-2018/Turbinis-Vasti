@@ -1,7 +1,7 @@
 class Player:
     def __init__(self, health, maxHealth, carriedResources, carryingCapacity,
                  collectingSpeed, totalResources, attackPower, defence, position, houseLocation,
-                 carriedItems, score, name, upgradeLevels):
+                 carriedItems, score, name, upgradeLevels, turn):
         self.Health = health
         self.MaxHealth = maxHealth
         self.CarriedResources = carriedResources
@@ -16,6 +16,7 @@ class Player:
         self.Score = score
         self.Name = name
         self.UpgradeLevels = upgradeLevels
+        self.Turn = turn
 
     def getUpgradeLevel(self, type):
         return self.UpgradeLevels[type]
