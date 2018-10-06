@@ -20,9 +20,17 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-        directions = [Point(0,-1), Point(0, -1), Point(0, -1), Point(0, 1), Point(-1, 0), Point(-1, 0), Point(1, 0), Point(1, 0)]
+        directions = [Go.Up, Go.Up, Go.Up, Go.Left, Go.Up]
+        #directions = [Point(-1, 0), Point(0, -1)]
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Point(directions[self.turn]))
+        #print("move")
+        #if (directions.__len__ == (self.turn -1)):
+        #    return create_move_action(Go.Up)
+        return create_move_action(directions[self.turn].value)
+        
+        #gameMap.getTileAt(Point())
+        #if (self.PlayerInfo.Position
+        #return create_move_action(Go.Right.value)
 
     def after_turn(self):
         """

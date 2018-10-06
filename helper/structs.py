@@ -1,4 +1,5 @@
 import math
+from enum import Enum
 
 
 class ActionTypes:
@@ -24,10 +25,10 @@ class Point(object):
 
     # Overloaded operators
     def __add__(self, point):
-        return Point(self.y + point.x, self.y + point.y)
+        return Point(self.x + point.x, self.y + point.y)
 
     def __sub__(self, point):
-        return Point(self.y - point.x, self.y - point.y)
+        return Point(self.x - point.x, self.y - point.y)
 
     def __str__(self):
         return "{{{0}, {1}}}".format(self.x, self.y)
@@ -59,3 +60,9 @@ class ActionContent(object):
     def __init__(self, action_name, content):
         self.ActionName = action_name
         self.Content = str(content)
+
+class Go(Enum):
+    Up = Point(0, -1)
+    Down = Point(0, 1)
+    Left = Point(-1, 0)
+    Right = Point(1, 0)
