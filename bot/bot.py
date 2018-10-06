@@ -58,7 +58,7 @@ class Bot:
         #directions = [Go.Right, Go.Right, Go.Right, Go.Right, Go.Right]
         surr = self.surroundings(gameMap)
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Go.Right.value)
+        return create_move_action(Go.Up.value)
 
 
     def after_turn(self):
