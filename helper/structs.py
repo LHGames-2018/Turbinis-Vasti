@@ -1,9 +1,5 @@
 import math
 from enum import Enum
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 
 class ActionTypes:
     DefaultAction, MoveAction, MeleeAttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction, HealAction = \
@@ -64,10 +60,6 @@ class ActionContent(object):
         self.ActionName = action_name
         self.Content = str(content)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 class Go(Enum):
     Up = Point(0, -1)
     Down = Point(0, 1)
