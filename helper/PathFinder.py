@@ -1,5 +1,6 @@
 from queue import PriorityQueue
 from helper.structs import *
+from helper.tile import *
 from enum import Enum
 
 class Moves(Enum):
@@ -52,16 +53,17 @@ class PositionState(State):
 
 
 class PathFinder(object):
-    def __init__(self, start, goal):
+    def __init__(self, start, goal, gameMap):
         self.path = []
         self.start = start
         self.goal = goal
         self.openQueue = PriorityQueue()
         self.visitedQueue = []
+        self.gameMap = gameMap
 
-    def childStateIsObstacle(self, position, gameMap):
-        objectId = gameMap.getTileAt(position.value)
-        return objectId.value != 0
+    def childStateIsObstacle(self, position):
+        objectId = self.gameMap.getTileAt(position.value)
+        return objectId != TileContent.Empty or objectId != TileContent.Wall
 
     def computeMoves(self, path):
         moves = []
@@ -70,7 +72,7 @@ class PathFinder(object):
         return moves
 
 
-    def Solve(self, gameMap):
+    def Solve(self):
         startState = PositionState(self.start, 0, self.start, self.goal )
         self.openQueue.put(startState)
         while not self.path and self.openQueue.qsize():
@@ -88,7 +90,7 @@ class PathFinder(object):
                     if child.distance == 0.0:
                         self.path = self.computeMoves(child.path)
                         break
-                    if self.childStateIsObstacle(child, gameMap):
+                    if self.childStateIsObstacle(child):
                         self.visitedQueue.append(child)
 
                     self.openQueue.put(child)
