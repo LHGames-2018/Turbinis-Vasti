@@ -16,7 +16,6 @@ class Player:
         self.Score = score
         self.Name = name
         self.UpgradeLevels = upgradeLevels
-        self.Turn = turn
 
     def getUpgradeLevel(self, type):
         return self.UpgradeLevels[type]

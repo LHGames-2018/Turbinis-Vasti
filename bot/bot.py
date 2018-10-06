@@ -3,8 +3,9 @@ from helper import *
 
 class Bot:
     def __init__(self):
-        pass
         self.turn = 0
+        pass
+
 
     def before_turn(self, playerInfo):
         """
