@@ -3,7 +3,6 @@ from helper import *
 
 class Bot:
     def __init__(self):
-        self.turn = 0
         pass
 
 
@@ -20,13 +19,11 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-        directions = [Point(0,-1), Point(0, -1), Point(0, -1), Point(0, 1), Point(-1, 0), Point(-1, 0), Point(1, 0), Point(1, 0)]
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Point(directions[self.turn]))
+        return create_move_action(Point(0, 1))
 
     def after_turn(self):
         """
         Gets called after executeTurn
         """
-        self.turn += 1
         pass
