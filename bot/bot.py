@@ -28,12 +28,6 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-        print(gameMap)
-        print(gameMap.getTileAt(Point(0,1)))
-        print(gameMap.xMin)
-        print(gameMap.xMax)
-        print(gameMap.yMin)
-        print(gameMap.yMin)
         print(self.surroundings(gameMap))
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
         return create_move_action(Point(1, 0))
