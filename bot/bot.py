@@ -1,5 +1,6 @@
 from helper import *
 from helper import PathFinder
+import math
 
 class Bot:
     def __init__(self):
@@ -45,13 +46,25 @@ class Bot:
             print("insert pathfinder algorithm to find resources")
         return nearbyRes
 
+    # takes an array of Point objects and returns the one which is closest to the player
+    def findClosest(self, list):
+        pos = self.PlayerInfo.Position
+        closest = Point(0, 0)
+        print(pos)
+        for entry in list:
+            if (abs((pos.x - entry.x)) + abs((pos.y - entry.y))) < (abs((pos.x - closest.x)) + abs((pos.y - closest.y))):
+                closest = entry
+        return closest
+
     def execute_turn(self, gameMap, visiblePlayers):
         """
         This is where you decide what action to take.
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-        print(self.scanResources(gameMap))
+        nearbyRes = self.scanResources(gameMap)
+        print(nearbyRes)
+        print(self.findClosest(nearbyRes))
         print("==========================================================")
         if self.start:
             self.start = True
