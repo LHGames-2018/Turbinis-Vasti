@@ -1,5 +1,5 @@
 import math
-
+from enum import Enum
 
 class ActionTypes:
     DefaultAction, MoveAction, MeleeAttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction, HealAction = \
@@ -59,3 +59,10 @@ class ActionContent(object):
     def __init__(self, action_name, content):
         self.ActionName = action_name
         self.Content = str(content)
+
+
+class Go(Enum):
+    Up = Point(0, -1)
+    Down = Point(0, 1)
+    Left = Point(-1, 0)
+    Right = Point(1, 0)
