@@ -5,6 +5,7 @@ class Bot:
     def __init__(self):
         pass
 
+
     def before_turn(self, playerInfo):
         """
         Gets called before ExecuteTurn. This is where you get your bot's state.
@@ -31,7 +32,6 @@ class Bot:
         print(self.surroundings(gameMap))
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
         return create_move_action(Point(1, 0))
-
 
     def after_turn(self):
         """
