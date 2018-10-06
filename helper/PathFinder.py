@@ -1,11 +1,12 @@
 from queue import PriorityQueue
 from helper.structs import *
+from enum import Enum
 
-class Moves:
-    North = Point(0,-1)
-    East = Point(1,0)
-    South = Point(0,1)
-    West = Point(-1,0)
+class Moves(Enum):
+    North = Point(0, -1)
+    East = Point(1, 0)
+    South = Point(0, 1)
+    West = Point(-1, 0)
 
 class State(object):
     def __init__(self, value, parent, start = 0, goal = 0):
@@ -31,21 +32,21 @@ class State(object):
 class PositionState(State):
     def __init__(self, value, parent, start = 0, goal = 0):
         super().__init__(value, parent, start, goal)
-        self.distance = self.getDistance()
+        self.distance = self.GetDistance()
 
-    def __tl__(self, other):
+    def __lt__(self, other):
         return self.distance < other.distance
 
     def GetDistance(self):
         if (self.value == self.goal):
             return 0
         else:
-            return self.value.Distance(self.goal)
+            return Point.Distance(self.value, self.goal)
 
     def CreateChildren(self):
         if not self.children:
             for direction in Moves:
-                val = self.value.add(direction)
+                val = self.value + direction.value
                 child = PositionState(val, self, self.start, self.goal)
                 self.children.append(child)
 
@@ -59,8 +60,15 @@ class PathFinder(object):
         self.visitedQueue = []
 
     def childStateIsObstacle(self, position, gameMap):
-        objectId = gameMap.getTileAt(position)
-        return objectId != 0
+        objectId = gameMap.getTileAt(position.value)
+        return objectId.value != 0
+
+    def computeMoves(self, path):
+        moves = []
+        for i in range(len(path)-1):
+            moves.append(path[i+1]-path[i])
+        return moves
+
 
     def Solve(self, gameMap):
         startState = PositionState(self.start, 0, self.start, self.goal )
@@ -70,20 +78,23 @@ class PathFinder(object):
             closestChild.CreateChildren()
 
             self.visitedQueue.append(closestChild.value)
+            counter = 0
             for child in closestChild.children:
+                counter +=1
+                print(counter)
+                if counter > 10:
+                    break
                 if child.value not in self.visitedQueue:
-                    if child.dist == 0:
-                        path = self.computeMoves(child.path)
-                        self.path = path
+                    if child.distance == 0.0:
+                        self.path = self.computeMoves(child.path)
                         break
-                    if childStateIsObstacle():
+                    if self.childStateIsObstacle(child, gameMap):
                         self.visitedQueue.append(child)
-                        continue
 
                     self.openQueue.put(child)
 
-
-
         if not self.path:
-            print("Goal of " + self.goal + "is not possible")
-        return self.path
+            print("Goal of " + str(self.goal) + "is not possible")
+            return
+        else:
+            return self.path

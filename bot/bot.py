@@ -25,19 +25,26 @@ class Bot:
         """
         print("==========================================================")
         if self.start:
-            pathFinder = PathFinder(self.PlayerInfo.Position, self.PlayerInfo.Position + Point(6, 6))
-            self.path = pathFinder.Solve(gamemap)
-            print(self.path)
-            while True:
-                continue
+            self.start = True
+            self.inMotion = True
+            '''print(self.PlayerInfo.Position)
+            print(Point(-6, 0))
+            print(self.PlayerInfo.Position + Point(-6, 0))'''
+            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, self.PlayerInfo.Position + Point(2, 0))
+            '''print(gameMap)'''
+            self.path = pathFinder.Solve(gameMap)
+            for point in self.path:
+                print(point)
+
 
         if self.inMotion:
             if self.nextMove == len(self.path):
                 self.nextMove = 0
                 self.path = []
+                self.inMotion = False
             else:
                 currentMove = self.nextMove
-                self.nextMove += 1
+                self.nextMove +=1
                 return create_move_action(self.path[currentMove])
 
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
