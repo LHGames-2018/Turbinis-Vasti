@@ -27,6 +27,7 @@ class Bot:
         for y in range(gameMap.yMin, gameMap.yMax):
             temp = []
             for x in range(gameMap.xMin, gameMap.xMax):
+                #print(str(x) + " " + str(y))
                 temp.append(gameMap.getTileAt(Point(x, y)))
             local.append(temp)
         return local
@@ -34,24 +35,15 @@ class Bot:
     # returns a list containing lists [x, y] of the coordinates of nearby resources
     def scanResources(self, surr):
         nearbyRes = []
-        for y in range(0, len(surr)):
-            for x in range(0, len(surr[y])):
-                if surr[y][x] is TileContent.Resource:
-                    nearbyRes.append([x, y])
+        for y in range(-10, 21):
+            for x in range(-10, 21):
+                if surr.getTileAt(self.PlayerInfo.Position + Point(x, y)) is TileContent.Resource:
+                    #print(self.PlayerInfo.Position)
+                    #print(self.PlayerInfo.Position + Point(x, y))
+                    nearbyRes.append(self.PlayerInfo.Position + Point(x, y))
         if self.priority is "res":
             print("insert pathfinder algorithm to find resources")
         return nearbyRes
-
-    # returns a list containing [x, y] of the coordinates of nearby players
-    def scanPlayers(self, surr):
-        nearbyPlayers = []
-        for y in range(0, len(surr)):
-            for x in range(0, len(surr[y])):
-                if surr[y][x] is TileContent.Player:
-                    nearbyPlayers.append([x, y])
-        if self.priority is "ply":
-            print("insert pathfinder algorithm to find resources")
-        return nearbyPlayers
 
     def execute_turn(self, gameMap, visiblePlayers):
         """
@@ -59,7 +51,7 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-<<<<<<< HEAD
+
         directions = [Go.Up, Go.Up, Go.Up, Go.Left, Go.Up]
         #directions = [Point(-1, 0), Point(0, -1)]
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
@@ -71,7 +63,9 @@ class Bot:
         #gameMap.getTileAt(Point())
         #if (self.PlayerInfo.Position
         #return create_move_action(Go.Right.value)
-=======
+
+        print(self.scanResources(gameMap))
+
         print("==========================================================")
         if self.start:
             self.start = True
@@ -97,10 +91,11 @@ class Bot:
                 return create_move_action(self.path[currentMove])
 
         #directions = [Go.Right, Go.Right, Go.Right, Go.Right, Go.Right]
-        surr = self.surroundings(gameMap)
+        #surr = self.surroundings(gameMap)
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Go.Up.value)
->>>>>>> master
+        #return create_move_action(Go.Up.value)
+
+
 
     def after_turn(self):
         self.turn += 1
@@ -108,3 +103,14 @@ class Bot:
         Gets called after executeTurn
         """
         pass
+
+
+    lastDirection = [Go.Up.value]
+
+    def findNextDirection(self, lastDirection):
+        if (lastDirection.len == 0):
+            lastDirection[0] = Go.Up.value
+            return lastDirection[0]
+        else:
+            lastDirection.append(Go[lastDirection.len].value)
+            return lastDirection[lastDirection.len - 1]
