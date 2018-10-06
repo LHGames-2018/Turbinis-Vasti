@@ -1,8 +1,13 @@
 from helper import *
-
+from helper import PathFinder
 
 class Bot:
     def __init__(self):
+        self.start = True
+        self.inMotion = False
+        self.nextMove = 0
+        self.path = []
+
         pass
 
     def before_turn(self, playerInfo):
@@ -18,9 +23,25 @@ class Bot:
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
+        print("==========================================================")
+        if self.start:
+            pathFinder = PathFinder(self.PlayerInfo.Position, self.PlayerInfo.Position + Point(6, 6))
+            self.path = pathFinder.Solve(gamemap)
+            print(self.path)
+            while True:
+                continue
+
+        if self.inMotion:
+            if self.nextMove == len(self.path):
+                self.nextMove = 0
+                self.path = []
+            else:
+                currentMove = self.nextMove
+                self.nextMove += 1
+                return create_move_action(self.path[currentMove])
 
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Point(1, 0))
+        return create_move_action(Point(0, 0))
 
     def after_turn(self):
         """

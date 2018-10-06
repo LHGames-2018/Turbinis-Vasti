@@ -1,5 +1,5 @@
 from queue import PriorityQueue
-from struct.py import Point
+from helper.structs import *
 
 class Moves:
     North = Point(0,-1)
