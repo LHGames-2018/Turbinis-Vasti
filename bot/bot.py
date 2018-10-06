@@ -1,12 +1,13 @@
 from helper import *
 from helper import PathFinder
+import math
 
 class Bot:
     def __init__(self):
 
         self.turn = 0
         self.priority = ""
-        self.start = True
+        #self.start = True
         self.inMotion = False
         self.nextMoveIndex = 0
         self.path = []
@@ -28,26 +29,31 @@ class Bot:
         for y in range(gameMap.yMin, gameMap.yMax):
             temp = []
             for x in range(gameMap.xMin, gameMap.xMax):
+                #print(str(x) + " " + str(y))
                 temp.append(gameMap.getTileAt(Point(x, y)))
             local.append(temp)
         return local
 
     # returns a list containing lists [x, y] of the coordinates of nearby resources
-    def scanResources(self, surr):
+    def scanResources(self, gameMap):
         nearbyRes = []
-        for y in range(0, len(surr)):
-            for x in range(0, len(surr[y])):
-                if surr[y][x] is TileContent.Resource:
-                    nearbyRes.append([x, y])
+        for y in range(-10, 11):
+            for x in range(-10, 11):
+                if gameMap.getTileAt(self.PlayerInfo.Position + Point(x, y)) is TileContent.Resource:
+                    #print(self.PlayerInfo.Position)
+                    #print(self.PlayerInfo.Position + Point(x, y))
+                    nearbyRes.append(self.PlayerInfo.Position + Point(x, y))
         if self.priority is "res":
             print("insert pathfinder algorithm to find resources")
         return nearbyRes
 
+
         # a tear drops for val RIP your valuable time
 
     def choosePathAction(self, gameMap,nextMove):
-        nextBlock = self.PlayerInfo.position + nextMove
-        blockId =  gameMap.getTileAt(nextBlock).value
+        nextBlock = self.PlayerInfo.Position + nextMove
+        blockId =  gameMap.getTileAt(nextBlock)
+        print(blockId)
         if blockId == TileContent.Wall:
             return "attack"
         elif blockId == TileContent.Empty:
@@ -60,6 +66,17 @@ class Bot:
         elif self.destinationAction == "home":
             return create_move_action(Point(0,0))
 
+    # takes an array of Point objects and returns the one which is closest to the player
+    def findClosest(self, list):
+        pos = self.PlayerInfo.Position
+        closest = Point(0, 0)
+        print(pos)
+        for entry in list:
+            if (abs((pos.x - entry.x)) + abs((pos.y - entry.y))) < (abs((pos.x - closest.x)) + abs((pos.y - closest.y))):
+                closest = entry
+        return closest
+
+
     def execute_turn(self, gameMap, visiblePlayers):
         """
         This is where you decide what action to take.
@@ -68,13 +85,14 @@ class Bot:
         """
 
         if not self.inMotion:
-            mineralPositions = self.scanArea(gameMap)
+            mineralPositions = self.scanResources(gameMap)
             if len(mineralPositions) == 0:
                 #defaultMove = self.computeDefaultNextMove()
                 defaultMove = Point(1,0)
+                print("This is number 1")
                 return create_move_action(defaultMove)
             else:
-                closestMineral = self.findClosest(mmineralPositions)
+                closestMineral = self.findClosest(mineralPositions)
                 pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, closestMineral, gameMap)
                 self.path = pathFinder.Solve()
                 self.inMotion = True
@@ -82,9 +100,16 @@ class Bot:
 
 
         if self.inMotion:
+            print("inMotion")
+            #print(self.path)
             nextMove = self.path[self.nextMoveIndex]
+            print (nextMove)
+            print(self.nextMoveIndex)
             decision = self.choosePathAction(gameMap, nextMove)
-            if self.nextMoveIndex == len(self.path):
+            print(decision)
+
+            if self.nextMoveIndex == len(self.path) - 1:
+                ressourceDirection = scanClose
                 destinationAction = self.execDestinationAction(self.path[self.nextMoveIndex-1])
                 self.nextMoveIndex = 0
                 self.path = []
@@ -92,13 +117,14 @@ class Bot:
                 return destinationAction
 
             elif decision == "attack":
+                print("attack")
                 return create_attack_action(nextMove)
             elif decision == "move":
                 self.nextMoveIndex += 1
-                create_move_action(nextMove)
+                return create_move_action(nextMove)
 
         if self.goHome:
-            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, closestMineral, gameMap)
+            pathFinder = PathFinder.PathFinder(self.PlayerInfo.Position, self.PlayerInfo.HouseLocation, gameMap)
             self.path = pathFinder.Solve()
             self.inMotion = True
             self.destinationAction = "home"
@@ -109,6 +135,10 @@ class Bot:
 
         #print(visiblePlayers)
         '''print(visiblePlayers)
+        nearbyRes = self.scanResources(gameMap)
+        print(nearbyRes)
+        print(self.findClosest(nearbyRes))
+
         print("==========================================================")
         if self.start:
             self.start = True
@@ -131,10 +161,11 @@ class Bot:
                 return create_move_action(self.path[currentMove])
 
         #directions = [Go.Right, Go.Right, Go.Right, Go.Right, Go.Right]
-        surr = self.surroundings(gameMap)
+        #surr = self.surroundings(gameMap)
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Go.Up.value)'''
+            '''
         return create_move_action(Point(0, 0))
+
     def after_turn(self):
         self.turn += 1
         """
