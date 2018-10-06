@@ -22,15 +22,24 @@ class Bot:
             local.append(temp)
         return local
 
+    def scanResources(self, surr):
+        nearbyRes = []
+        for y in range(0, len(surr)):
+            for x in range(0, len(surr[y])):
+                if surr[y][x] is TileContent.Resource:
+                    nearbyRes.append([x, y])
+        return nearbyRes
+
     def execute_turn(self, gameMap, visiblePlayers):
         """
         This is where you decide what action to take.
             :param gameMap: The gamemap.
             :param visiblePlayers:  The list of visible players.
         """
-        print(self.surroundings(gameMap))
+        surr = self.surroundings(gameMap)
+
         # Write your bot here. Use functions from aiHelper to instantiate your actions.
-        return create_move_action(Point(1, 0))
+        return create_move_action(Point(-1, 0))
 
 
     def after_turn(self):
